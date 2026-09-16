@@ -7,40 +7,29 @@
 <meta name="description" content="Premium floor, wall, bathroom, kitchen & vitrified tiles across Chhattisgarh. 5 showrooms in Raipur, Durg, Jagdalpur, Rajim & Kurud. Trusted since 2012." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<!-- PPNeueMontreal is a paid font with no free CDN license; using Inter as the documented substitute (weights 200/400/600/700). -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-<!-- Top info bar -->
-<div class="topbar">
-  <div class="container topbar-inner">
-    <span>📍 5 Showrooms across Chhattisgarh</span>
-    <span class="topbar-right">
-      <a href="tel:+918359966066">📞 +91 83599 66066</a>
-      <a href="mailto:Info@radhetilesworld.com">✉️ Info@radhetilesworld.com</a>
-    </span>
-  </div>
-</div>
-
-<!-- Header -->
-<header class="site-header" id="header">
-  <div class="container header-inner">
+<!-- Nav -->
+<header class="nav-bar">
+  <div class="container nav-inner">
     <a href="#top" class="logo">
-      <span class="logo-mark">RT</span>
-      <span class="logo-text">Radhe<br><small>Tiles World</small></span>
+      <span class="logo-mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 18 18"><polygon points="9,1 17,16 1,16" fill="url(#logoGrad)"/><defs><linearGradient id="logoGrad" x1="0" y1="0" x2="18" y2="18"><stop offset="0" stop-color="#8052ff"/><stop offset="1" stop-color="#15846e"/></linearGradient></defs></svg>
+      </span>
+      <span class="wordmark">Radhe Tiles World</span>
     </a>
-    <nav class="nav" id="nav">
-      <a href="#home">Home</a>
-      <a href="#about">About Us</a>
+    <nav class="nav-links" id="navLinks">
       <a href="#collections">Collections</a>
       <a href="#branches">Branches</a>
-      <a href="#contact">Contact Us</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
     </nav>
-    <a class="btn btn-whatsapp header-cta" href="https://wa.me/918359966066" target="_blank" rel="noopener">Get In Touch</a>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+    <a class="btn-pill" href="https://wa.me/918359966066" target="_blank" rel="noopener">Get a Quote</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -48,219 +37,163 @@
 
   <!-- Hero -->
   <section class="hero" id="home">
-    <div class="hero-pattern" aria-hidden="true"></div>
-    <div class="container hero-inner">
-      <p class="eyebrow">Trusted Since 2012 &middot; Chhattisgarh</p>
-      <h1>Sajega har ghar,<br><span>khaas Radhe Tiles ke sang.</span></h1>
-      <p class="hero-sub">Premium tiles for every space — trusted by thousands, crafted for life. Floor, wall, bathroom, kitchen &amp; vitrified tiles under one roof.</p>
-      <div class="hero-actions">
-        <a href="https://wa.me/918359966066" target="_blank" rel="noopener" class="btn btn-whatsapp">Chat on WhatsApp</a>
-        <a href="#contact" class="btn btn-outline">Get a Free Quote</a>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="label label-amber">Trusted since 2012 &middot; Chhattisgarh</p>
+        <h1 class="text-heading-lg">Sajega har ghar, khaas Radhe Tiles ke sang.</h1>
+        <p class="text-body hero-sub">Premium tiles for every space — floor, wall, bathroom, kitchen &amp; vitrified. Trusted by 5000+ customers, crafted for life.</p>
+        <div class="hero-actions">
+          <a href="https://wa.me/918359966066" target="_blank" rel="noopener" class="btn-pill">Chat on WhatsApp</a>
+          <a href="#contact" class="ghost-link">Get a Free Quote &rarr;</a>
+        </div>
       </div>
-      <div class="hero-stats">
-        <div><strong>12+</strong><span>Years Experience</span></div>
-        <div><strong>5000+</strong><span>Happy Customers</span></div>
-        <div><strong>10,000+</strong><span>Design Varieties</span></div>
-        <div><strong>50+</strong><span>Trusted Brands</span></div>
+      <div class="hero-visual">
+        <canvas id="constellation" aria-hidden="true"></canvas>
+      </div>
+    </div>
+    <div class="container stats-row">
+      <div><span class="text-heading-2xs">12+</span><span class="text-caption muted">Years of Trust</span></div>
+      <div><span class="text-heading-2xs">5000+</span><span class="text-caption muted">Happy Customers</span></div>
+      <div><span class="text-heading-2xs">10,000+</span><span class="text-caption muted">Design Varieties</span></div>
+      <div><span class="text-heading-2xs">50+</span><span class="text-caption muted">Trusted Brands</span></div>
+    </div>
+  </section>
+
+  <!-- Section 1: zigzag — visual left / text right -->
+  <section class="zigzag" id="about">
+    <div class="container zigzag-grid reverse">
+      <div class="zigzag-visual">
+        <div class="blob blob-a"></div>
+      </div>
+      <div class="zigzag-copy">
+        <p class="label label-amber">What We Do</p>
+        <h2 class="text-heading">Everything under one roof.</h2>
+        <p class="text-body muted">From selection to after-sales, we make your tiling project effortless — largest collection, premium partner brands, expert guidance, ready stock, best pricing, and support that continues after purchase.</p>
       </div>
     </div>
   </section>
 
-  <!-- Value pillars -->
-  <section class="pillars">
-    <div class="container pillars-grid">
-      <div class="pillar reveal">
-        <div class="pillar-icon">🤝</div>
-        <h3>Friendly Service</h3>
-        <p>Warm, honest guidance at every step of your buying journey.</p>
+  <!-- Section 2: zigzag — text left / visual right -->
+  <section class="zigzag" id="collections">
+    <div class="container zigzag-grid">
+      <div class="zigzag-copy">
+        <p class="label label-amber">Our Collections</p>
+        <h2 class="text-heading">Tiles for every corner of your home.</h2>
+        <ul class="ghost-list">
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Floor Tiles</a></li>
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Wall Tiles</a></li>
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Vitrified Tiles</a></li>
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Bathroom Tiles</a></li>
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Kitchen Tiles</a></li>
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Parking Tiles</a></li>
+          <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Outdoor Tiles</a></li>
+        </ul>
       </div>
-      <div class="pillar reveal">
-        <div class="pillar-icon">✅</div>
-        <h3>Reliable Products</h3>
-        <p>Only trusted, quality-checked brands make it to our shelves.</p>
+      <div class="zigzag-visual">
+        <div class="blob blob-b"></div>
       </div>
-      <div class="pillar reveal">
-        <div class="pillar-icon">💰</div>
-        <h3>Affordable Pricing</h3>
-        <p>Best-in-market rates without compromising on quality.</p>
-      </div>
-      <div class="pillar reveal">
-        <div class="pillar-icon">⭐</div>
-        <h3>Premium Quality</h3>
-        <p>10,000+ curated designs sourced from 50+ leading brands.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services -->
-  <section class="section services" id="about">
-    <div class="container">
-      <p class="section-eyebrow">What We Do</p>
-      <h2 class="section-title">Everything Under One Roof</h2>
-      <p class="section-sub">From selection to after-sales — we make your tiling project effortless.</p>
-      <div class="services-grid">
-        <div class="service-card reveal">
-          <div class="service-icon">🗂️</div>
-          <h3>Largest Collection</h3>
-          <p>A vast, ever-growing range of tiles for every room and budget.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon">🏆</div>
-          <h3>Premium Products</h3>
-          <p>Partnered with 50+ trusted, quality-assured brands.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon">🧭</div>
-          <h3>Expert Guidance</h3>
-          <p>Personalized support to pick the right tile for your space.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon">📦</div>
-          <h3>Ready Stock</h3>
-          <p>Quick availability so your project never has to wait.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon">🏷️</div>
-          <h3>Best Pricing</h3>
-          <p>Competitive, transparent rates on every collection.</p>
-        </div>
-        <div class="service-card reveal">
-          <div class="service-icon">🛠️</div>
-          <h3>After Sales Support</h3>
-          <p>We're with you even after the purchase is complete.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Collections / Products -->
-  <section class="section collections" id="collections">
-    <div class="container">
-      <p class="section-eyebrow">Our Collections</p>
-      <h2 class="section-title">Tiles for Every Corner of Your Home</h2>
-      <div class="collections-grid">
-        <div class="collection-card reveal"><span class="collection-tag">Floor Tiles</span></div>
-        <div class="collection-card reveal"><span class="collection-tag">Wall Tiles</span></div>
-        <div class="collection-card reveal"><span class="collection-tag">Vitrified Tiles</span></div>
-        <div class="collection-card reveal"><span class="collection-tag">Bathroom Tiles</span></div>
-        <div class="collection-card reveal"><span class="collection-tag">Kitchen Tiles</span></div>
-        <div class="collection-card reveal"><span class="collection-tag">Parking Tiles</span></div>
-        <div class="collection-card reveal"><span class="collection-tag">Outdoor Tiles</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats band -->
-  <section class="stats-band">
-    <div class="container stats-grid">
-      <div><strong>12+</strong><span>Years of Trust</span></div>
-      <div><strong>5000+</strong><span>Satisfied Customers</span></div>
-      <div><strong>10,000+</strong><span>Design Varieties</span></div>
-      <div><strong>50+</strong><span>Associated Brands</span></div>
-      <div><strong>100%</strong><span>Quality Assurance</span></div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="section testimonials">
+  <section class="section-flat">
     <div class="container">
-      <p class="section-eyebrow">Testimonials</p>
-      <h2 class="section-title">Trusted by Thousands</h2>
-      <div class="testimonials-grid">
-        <blockquote class="testimonial-card reveal">
-          <p>"Amazing collection and very professional service. Found exactly what I needed for my new home in Durg."</p>
-          <footer>— Customer, Durg</footer>
+      <p class="label label-amber">Testimonials</p>
+      <h2 class="text-heading">Trusted by thousands.</h2>
+      <div class="quote-stack">
+        <blockquote>
+          <p class="text-heading-2xs quote-text">"Amazing collection and very professional service. Found exactly what I needed for my new home."</p>
+          <footer class="text-caption muted">— Customer, Durg</footer>
         </blockquote>
-        <blockquote class="testimonial-card reveal">
-          <p>"Hassle-free experience from start to finish. The team guided us through every step patiently."</p>
-          <footer>— Customer, Bhilai</footer>
+        <blockquote>
+          <p class="text-heading-2xs quote-text">"Hassle-free experience from start to finish. The team guided us through every step patiently."</p>
+          <footer class="text-caption muted">— Customer, Bhilai</footer>
         </blockquote>
-        <blockquote class="testimonial-card reveal">
-          <p>"Best pricing in Raipur with genuine, quality tiles. Highly recommend Radhe Tiles World."</p>
-          <footer>— Customer, Raipur</footer>
+        <blockquote>
+          <p class="text-heading-2xs quote-text">"Best pricing in Raipur with genuine, quality tiles. Highly recommend Radhe Tiles World."</p>
+          <footer class="text-caption muted">— Customer, Raipur</footer>
         </blockquote>
       </div>
     </div>
   </section>
 
   <!-- Branches -->
-  <section class="section branches" id="branches">
+  <section class="section-flat" id="branches">
     <div class="container">
-      <p class="section-eyebrow">Visit Us</p>
-      <h2 class="section-title">Our Showrooms</h2>
-      <div class="branches-grid">
-        <div class="branch-card reveal"><h3>Raipur</h3><p>Chhattisgarh</p></div>
-        <div class="branch-card reveal"><h3>Durg</h3><p>Chhattisgarh</p></div>
-        <div class="branch-card reveal"><h3>Jagdalpur</h3><p>Chhattisgarh</p></div>
-        <div class="branch-card reveal"><h3>Rajim</h3><p>Chhattisgarh</p></div>
-        <div class="branch-card reveal"><h3>Kurud</h3><p>Chhattisgarh</p></div>
+      <p class="label label-amber">Visit Us</p>
+      <h2 class="text-heading">Our showrooms.</h2>
+      <div class="branch-row">
+        <div><span class="text-heading-xs">Raipur</span><span class="text-caption muted">Chhattisgarh</span></div>
+        <div><span class="text-heading-xs">Durg</span><span class="text-caption muted">Chhattisgarh</span></div>
+        <div><span class="text-heading-xs">Jagdalpur</span><span class="text-caption muted">Chhattisgarh</span></div>
+        <div><span class="text-heading-xs">Rajim</span><span class="text-caption muted">Chhattisgarh</span></div>
+        <div><span class="text-heading-xs">Kurud</span><span class="text-caption muted">Chhattisgarh</span></div>
       </div>
-      <p class="branches-hours">Mon–Sat: 10 AM – 8 PM &nbsp;|&nbsp; Sun: 10 AM – 4 PM</p>
+      <p class="text-body muted">Mon&ndash;Sat: 10 AM &ndash; 8 PM &nbsp;&middot;&nbsp; Sun: 10 AM &ndash; 4 PM</p>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section class="section faq">
-    <div class="container faq-inner">
-      <p class="section-eyebrow">FAQ</p>
-      <h2 class="section-title">Frequently Asked Questions</h2>
-      <div class="faq-list" id="faqList">
+  <section class="section-flat" id="faq">
+    <div class="container faq-wrap">
+      <p class="label label-amber">FAQ</p>
+      <h2 class="text-heading">Frequently asked questions.</h2>
+      <div class="faq-list">
         <div class="faq-item">
-          <button class="faq-question">Do you offer home delivery? <span>+</span></button>
-          <div class="faq-answer"><p>Yes, we deliver to your doorstep across all our service areas in Chhattisgarh.</p></div>
+          <button class="faq-question text-heading-xs">Do you offer home delivery? <span>+</span></button>
+          <div class="faq-answer"><p class="text-body muted">Yes, we deliver to your doorstep across all our service areas in Chhattisgarh.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Do you help with installation? <span>+</span></button>
-          <div class="faq-answer"><p>Yes, our team can guide you to trusted installation professionals for a smooth finish.</p></div>
+          <button class="faq-question text-heading-xs">Do you help with installation? <span>+</span></button>
+          <div class="faq-answer"><p class="text-body muted">Yes, our team can guide you to trusted installation professionals for a smooth finish.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Do you offer wholesale pricing? <span>+</span></button>
-          <div class="faq-answer"><p>Yes, we offer special pricing for bulk and wholesale orders — contact us for a quote.</p></div>
+          <button class="faq-question text-heading-xs">Do you offer wholesale pricing? <span>+</span></button>
+          <div class="faq-answer"><p class="text-body muted">Yes, we offer special pricing for bulk and wholesale orders — contact us for a quote.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">Can I get samples before buying? <span>+</span></button>
-          <div class="faq-answer"><p>Absolutely — visit any of our 5 showrooms to see and feel samples in person.</p></div>
+          <button class="faq-question text-heading-xs">Can I get samples before buying? <span>+</span></button>
+          <div class="faq-answer"><p class="text-body muted">Absolutely — visit any of our 5 showrooms to see and feel samples in person.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">What is your exchange policy? <span>+</span></button>
-          <div class="faq-answer"><p>Unopened, unused stock can be exchanged — please ask our staff for details at the time of purchase.</p></div>
+          <button class="faq-question text-heading-xs">What is your exchange policy? <span>+</span></button>
+          <div class="faq-answer"><p class="text-body muted">Unopened, unused stock can be exchanged — please ask our staff for details at the time of purchase.</p></div>
         </div>
         <div class="faq-item">
-          <button class="faq-question">How do I request a quote? <span>+</span></button>
-          <div class="faq-answer"><p>Message us on WhatsApp or fill the contact form below and our team will respond quickly.</p></div>
+          <button class="faq-question text-heading-xs">How do I request a quote? <span>+</span></button>
+          <div class="faq-answer"><p class="text-body muted">Message us on WhatsApp or fill the contact form below and our team will respond quickly.</p></div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="cta-banner">
+  <section class="cta">
     <div class="container cta-inner">
-      <h2>Ready to transform your space?</h2>
-      <p>Talk to our experts today and get a free consultation.</p>
-      <a href="https://wa.me/918359966066" target="_blank" rel="noopener" class="btn btn-whatsapp">Chat on WhatsApp</a>
+      <h2 class="text-heading-lg">Ready to transform your space?</h2>
+      <p class="text-body muted">Talk to our experts today and get a free consultation.</p>
+      <a href="https://wa.me/918359966066" target="_blank" rel="noopener" class="btn-pill">Chat on WhatsApp</a>
     </div>
   </section>
 
   <!-- Contact -->
-  <section class="section contact" id="contact">
+  <section class="section-flat" id="contact">
     <div class="container contact-grid">
-      <div class="reveal">
-        <p class="section-eyebrow">Get In Touch</p>
-        <h2 class="section-title">Contact Us</h2>
-        <ul class="contact-list">
-          <li><strong>Phone:</strong> <a href="tel:+918359966066">+91 83599 66066</a></li>
-          <li><strong>Email:</strong> <a href="mailto:Info@radhetilesworld.com">Info@radhetilesworld.com</a></li>
-          <li><strong>Showrooms:</strong> Raipur, Durg, Jagdalpur, Rajim, Kurud</li>
-          <li><strong>Hours:</strong> Mon–Sat 10 AM–8 PM, Sun 10 AM–4 PM</li>
+      <div>
+        <p class="label label-amber">Get In Touch</p>
+        <h2 class="text-heading">Contact us.</h2>
+        <ul class="contact-list text-body">
+          <li><span class="muted">Phone</span><a href="tel:+918359966066">+91 83599 66066</a></li>
+          <li><span class="muted">Email</span><a href="mailto:Info@radhetilesworld.com">Info@radhetilesworld.com</a></li>
+          <li><span class="muted">Showrooms</span><span>Raipur, Durg, Jagdalpur, Rajim, Kurud</span></li>
+          <li><span class="muted">Hours</span><span>Mon&ndash;Sat 10 AM&ndash;8 PM, Sun 10 AM&ndash;4 PM</span></li>
         </ul>
-        <a href="https://wa.me/918359966066" target="_blank" rel="noopener" class="btn btn-whatsapp">Message Us on WhatsApp</a>
       </div>
-      <form class="contact-form reveal" onsubmit="return false;">
-        <label>Name<input type="text" name="name" required /></label>
-        <label>Phone<input type="tel" name="phone" required /></label>
-        <label>Message<textarea name="message" rows="4"></textarea></label>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+      <form class="ghost-form" onsubmit="return false;">
+        <label class="text-caption muted">Name<input type="text" name="name" required /></label>
+        <label class="text-caption muted">Phone<input type="tel" name="phone" required /></label>
+        <label class="text-caption muted">Message<textarea name="message" rows="3"></textarea></label>
+        <button type="submit" class="btn-pill">Send Message</button>
       </form>
     </div>
   </section>
@@ -268,40 +201,39 @@
 </main>
 
 <!-- Footer -->
-<footer class="site-footer">
+<footer class="footer">
   <div class="container footer-grid">
     <div>
-      <a href="#top" class="logo footer-logo">
-        <span class="logo-mark">RT</span>
-        <span class="logo-text">Radhe<br><small>Tiles World</small></span>
+      <a href="#top" class="logo">
+        <span class="logo-mark" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 18 18"><polygon points="9,1 17,16 1,16" fill="url(#logoGrad2)"/><defs><linearGradient id="logoGrad2" x1="0" y1="0" x2="18" y2="18"><stop offset="0" stop-color="#8052ff"/><stop offset="1" stop-color="#15846e"/></linearGradient></defs></svg>
+        </span>
+        <span class="wordmark">Radhe Tiles World</span>
       </a>
-      <p>Honest Guidance, Quality Products, Ready Stock, Customer First — since 2012.</p>
+      <p class="text-caption muted footer-tag">Honest guidance, quality products, ready stock, customer first — since 2012.</p>
     </div>
     <div>
-      <h4>Quick Links</h4>
-      <a href="#home">Home</a>
-      <a href="#about">About Us</a>
-      <a href="#collections">Collections</a>
-      <a href="#branches">Branches</a>
-      <a href="#contact">Contact Us</a>
+      <p class="text-nav-label muted footer-heading">Quick Links</p>
+      <a href="#home" class="ghost-link">Home</a>
+      <a href="#collections" class="ghost-link">Collections</a>
+      <a href="#branches" class="ghost-link">Branches</a>
+      <a href="#contact" class="ghost-link">Contact</a>
     </div>
     <div>
-      <h4>Products</h4>
-      <span>Floor Tiles</span>
-      <span>Wall Tiles</span>
-      <span>Vitrified Tiles</span>
-      <span>Bathroom Tiles</span>
-      <span>Kitchen Tiles</span>
+      <p class="text-nav-label muted footer-heading">Products</p>
+      <span class="text-body muted footer-item">Floor Tiles</span>
+      <span class="text-body muted footer-item">Wall Tiles</span>
+      <span class="text-body muted footer-item">Vitrified Tiles</span>
+      <span class="text-body muted footer-item">Bathroom Tiles</span>
     </div>
     <div>
-      <h4>Contact</h4>
-      <span>+91 83599 66066</span>
-      <span>Info@radhetilesworld.com</span>
-      <span>Raipur &middot; Durg &middot; Jagdalpur &middot; Rajim &middot; Kurud</span>
+      <p class="text-nav-label muted footer-heading">Contact</p>
+      <span class="text-body muted footer-item">+91 83599 66066</span>
+      <span class="text-body muted footer-item">Info@radhetilesworld.com</span>
     </div>
   </div>
   <div class="container footer-bottom">
-    <p>&copy; <span id="year"></span> Radhe Tiles World. All rights reserved.</p>
+    <p class="text-caption muted">&copy; <span id="year"></span> Radhe Tiles World. All rights reserved.</p>
   </div>
 </footer>
 
