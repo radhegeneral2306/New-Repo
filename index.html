@@ -13,6 +13,9 @@
 </head>
 <body>
 
+<!-- Full-page particle field, fixed behind all content -->
+<div class="constellation-layer" aria-hidden="true"><canvas id="constellation"></canvas></div>
+
 <!-- Nav -->
 <header class="nav-bar">
   <div class="container nav-inner">
@@ -47,9 +50,7 @@
           <a href="#contact" class="ghost-link">Get a Free Quote &rarr;</a>
         </div>
       </div>
-      <div class="hero-visual">
-        <canvas id="constellation" aria-hidden="true"></canvas>
-      </div>
+      <div class="hero-visual" aria-hidden="true"></div>
     </div>
     <div class="container stats-row">
       <div><span class="text-heading-2xs">12+</span><span class="text-caption muted">Years of Trust</span></div>
@@ -61,13 +62,10 @@
 
   <!-- Section 1: zigzag — visual left / text right -->
   <section class="zigzag" id="about">
-    <div class="container zigzag-grid reverse">
-      <div class="zigzag-visual">
-        <div class="blob blob-a"></div>
-      </div>
+    <div class="container zigzag-grid">
+      <h2 class="text-heading-lg">Everything under one roof.</h2>
       <div class="zigzag-copy">
         <p class="label label-amber">What We Do</p>
-        <h2 class="text-heading">Everything under one roof.</h2>
         <p class="text-body muted">From selection to after-sales, we make your tiling project effortless — largest collection, premium partner brands, expert guidance, ready stock, best pricing, and support that continues after purchase.</p>
       </div>
     </div>
@@ -76,9 +74,9 @@
   <!-- Section 2: zigzag — text left / visual right -->
   <section class="zigzag" id="collections">
     <div class="container zigzag-grid">
+      <h2 class="text-heading-lg">Tiles for every corner of your home.</h2>
       <div class="zigzag-copy">
         <p class="label label-amber">Our Collections</p>
-        <h2 class="text-heading">Tiles for every corner of your home.</h2>
         <ul class="ghost-list">
           <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Floor Tiles</a></li>
           <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Wall Tiles</a></li>
@@ -88,9 +86,6 @@
           <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Parking Tiles</a></li>
           <li><a href="https://wa.me/918359966066" target="_blank" rel="noopener">Outdoor Tiles</a></li>
         </ul>
-      </div>
-      <div class="zigzag-visual">
-        <div class="blob blob-b"></div>
       </div>
     </div>
   </section>
@@ -239,6 +234,7 @@
 
 <a href="https://wa.me/918359966066" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">💬</a>
 
+<script src="js/particles.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>
