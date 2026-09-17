@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
-import type { UserRole } from '@/types/database.types'
+import type { UserRole, ProfileRow } from '@/types/database.types'
 import { useAuth } from '@/hooks/useAuth'
 import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,12 +10,14 @@ import { Button } from '@/components/ui/button'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import AddUserForm from '@/components/settings/AddUserForm'
+import EditUserForm from '@/components/settings/EditUserForm'
 
 export default function SettingsUsersPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { t } = useTranslation()
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const [editingProfile, setEditingProfile] = useState<ProfileRow | null>(null)
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['profiles'],
@@ -48,6 +50,11 @@ export default function SettingsUsersPage() {
       </div>
 
       <AddUserForm open={addUserOpen} onOpenChange={setAddUserOpen} />
+      <EditUserForm
+        open={editingProfile !== null}
+        onOpenChange={(open) => !open && setEditingProfile(null)}
+        profile={editingProfile}
+      />
 
       <Card>
         <CardHeader>
@@ -63,6 +70,7 @@ export default function SettingsUsersPage() {
                   <TableHead>{t('common.name')}</TableHead>
                   <TableHead>{t('common.email')}</TableHead>
                   <TableHead>{t('settings.role')}</TableHead>
+                  <TableHead>{t('common.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -89,6 +97,11 @@ export default function SettingsUsersPage() {
                           </SelectContent>
                         </Select>
                       )}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="outline" size="sm" onClick={() => setEditingProfile(profile)}>
+                        {t('common.edit')}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

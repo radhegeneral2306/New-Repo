@@ -186,6 +186,10 @@ export const en = {
     addUserSubmit: 'Create user',
     creatingUser: 'Creating…',
     newUserPasswordHint: 'At least 8 characters. Share this with them separately.',
+    editUser: 'Edit User',
+    savingUser: 'Saving…',
+    resetPasswordOptional: 'Reset password (optional)',
+    resetPasswordHint: 'Leave blank to keep their current password.',
   },
   forms: {
     dateRequired: 'Date is required',
@@ -421,6 +425,10 @@ export const hi: typeof en = {
     addUserSubmit: 'उपयोगकर्ता बनाएं',
     creatingUser: 'बनाया जा रहा है…',
     newUserPasswordHint: 'कम से कम 8 अक्षर। इसे अलग से उनके साथ साझा करें।',
+    editUser: 'उपयोगकर्ता संपादित करें',
+    savingUser: 'सेव किया जा रहा है…',
+    resetPasswordOptional: 'पासवर्ड रीसेट करें (वैकल्पिक)',
+    resetPasswordHint: 'उनका वर्तमान पासवर्ड रखने के लिए खाली छोड़ें।',
   },
   forms: {
     dateRequired: 'तारीख़ आवश्यक है',
