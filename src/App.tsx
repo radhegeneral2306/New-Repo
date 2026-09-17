@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { HashRouter, Routes, Route } from 'react-router-dom'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import ProtectedRoute from '@/components/layout/ProtectedRoute'
 import RequireRole from '@/components/layout/RequireRole'
 import AppLayout from '@/components/layout/AppLayout'
@@ -16,12 +17,11 @@ import SettingsAccountsPage from '@/pages/SettingsAccountsPage'
 import SettingsUsersPage from '@/pages/SettingsUsersPage'
 
 function SettingsOnly({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
   return (
     <RequireRole
       fallback={
-        <p className="text-sm text-muted-foreground">
-          You need Super Admin access to view this page.
-        </p>
+        <p className="text-sm text-muted-foreground">{t('nav.settingsAccessDenied')}</p>
       }
     >
       {children}

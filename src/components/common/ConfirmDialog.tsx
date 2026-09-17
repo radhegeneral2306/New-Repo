@@ -1,3 +1,4 @@
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -24,9 +25,10 @@ export default function ConfirmDialog({
   title,
   description,
   onConfirm,
-  confirmLabel = 'Delete',
+  confirmLabel,
   isLoading,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation()
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -36,10 +38,10 @@ export default function ConfirmDialog({
         </DialogHeader>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button variant="destructive" onClick={onConfirm} disabled={isLoading}>
-            {confirmLabel}
+            {confirmLabel ?? t('common.delete')}
           </Button>
         </DialogFooter>
       </DialogContent>

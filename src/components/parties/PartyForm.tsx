@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import type { PartyRow } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -17,15 +18,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
-const partySchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  party_type: z.enum(['debtor', 'creditor']),
-  phone: z.string().optional(),
-  address: z.string().optional(),
-  opening_balance: z.number(),
-})
-
-type PartyFormValues = z.infer<typeof partySchema>
+type PartyFormValues = {
+  name: string
+  party_type: 'debtor' | 'creditor'
+  phone?: string
+  address?: string
+  opening_balance: number
+}
 
 interface PartyFormProps {
   open: boolean
@@ -36,6 +35,20 @@ interface PartyFormProps {
 
 export default function PartyForm({ open, onOpenChange, party, defaultPartyType }: PartyFormProps) {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
+
+  const partySchema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(1, t('forms.nameRequired')),
+        party_type: z.enum(['debtor', 'creditor']),
+        phone: z.string().optional(),
+        address: z.string().optional(),
+        opening_balance: z.number(),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
@@ -103,17 +116,17 @@ export default function PartyForm({ open, onOpenChange, party, defaultPartyType 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{party ? 'Edit party' : 'Add party'}</DialogTitle>
+          <DialogTitle>{party ? t('forms.editParty') : t('forms.addParty')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit((v) => mutation.mutate(v))} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t('common.name')}</Label>
             <Input id="name" {...register('name')} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label>Type</Label>
+              <Label>{t('common.type')}</Label>
               <Controller
                 control={control}
                 name="party_type"
@@ -123,15 +136,15 @@ export default function PartyForm({ open, onOpenChange, party, defaultPartyType 
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="debtor">Debtor</SelectItem>
-                      <SelectItem value="creditor">Creditor</SelectItem>
+                      <SelectItem value="debtor">{t('common.debtor')}</SelectItem>
+                      <SelectItem value="creditor">{t('common.creditor')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="opening_balance">Opening Balance</Label>
+              <Label htmlFor="opening_balance">{t('partyDetail.openingBalance')}</Label>
               <Input
                 id="opening_balance"
                 type="number"
@@ -141,11 +154,11 @@ export default function PartyForm({ open, onOpenChange, party, defaultPartyType 
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t('common.phone')}</Label>
             <Input id="phone" {...register('phone')} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t('forms.address')}</Label>
             <Input id="address" {...register('address')} />
           </div>
 
@@ -155,10 +168,10 @@ export default function PartyForm({ open, onOpenChange, party, defaultPartyType 
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              {party ? 'Save changes' : 'Add party'}
+              {party ? t('common.saveChanges') : t('forms.addPartySubmit')}
             </Button>
           </DialogFooter>
         </form>

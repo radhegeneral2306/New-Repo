@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react'
 import { useTransactions } from '@/hooks/useTransactions'
 import type { TransactionFilters } from '@/hooks/useTransactions'
 import type { CategoryKind } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import LedgerFilters from '@/components/ledger/LedgerFilters'
@@ -15,6 +16,7 @@ export default function CategoryLedgerPage({ kind, title }: { kind: CategoryKind
   const [filters, setFilters] = useState<TransactionFilters>({ categoryKind: kind })
   const [addOpen, setAddOpen] = useState(false)
   const { data: transactions, isLoading } = useTransactions(filters)
+  const { t } = useTranslation()
 
   return (
     <div className="flex flex-col gap-4">
@@ -22,13 +24,13 @@ export default function CategoryLedgerPage({ kind, title }: { kind: CategoryKind
         <div>
           <h1 className="text-xl font-semibold">{title}</h1>
           <p className="text-sm text-muted-foreground">
-            Transactions categorized as {kind === 'expense' ? 'expenses' : 'income'}
+            {t('ledger.categorizedAs')} {kind === 'expense' ? t('common.expense').toLowerCase() : t('common.income').toLowerCase()}
           </p>
         </div>
         <RequireRole>
           <Button onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" />
-            Add Transaction
+            {t('ledger.addTransaction')}
           </Button>
         </RequireRole>
       </div>
@@ -39,7 +41,7 @@ export default function CategoryLedgerPage({ kind, title }: { kind: CategoryKind
 
       <Card>
         <CardHeader>
-          <CardTitle>Transactions ({transactions?.length ?? 0})</CardTitle>
+          <CardTitle>{t('ledger.transactions')} ({transactions?.length ?? 0})</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionTable transactions={transactions ?? []} isLoading={isLoading} />

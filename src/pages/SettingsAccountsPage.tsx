@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import { useBankAccounts, useCategories } from '@/hooks/useLookups'
 import type { BankAccountRow, CategoryRow } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -15,17 +16,18 @@ import CategoryForm from '@/components/settings/CategoryForm'
 import ConfirmDialog from '@/components/common/ConfirmDialog'
 
 export default function SettingsAccountsPage() {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-xl font-semibold">Accounts &amp; Categories</h1>
-        <p className="text-sm text-muted-foreground">Manage bank accounts and expense/income categories</p>
+        <h1 className="text-xl font-semibold">{t('settings.accountsCategoriesHeading')}</h1>
+        <p className="text-sm text-muted-foreground">{t('settings.accountsCategoriesSubtitle')}</p>
       </div>
 
       <Tabs defaultValue="accounts">
         <TabsList>
-          <TabsTrigger value="accounts">Bank Accounts</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
+          <TabsTrigger value="accounts">{t('settings.bankAccountsTab')}</TabsTrigger>
+          <TabsTrigger value="categories">{t('settings.categoriesTab')}</TabsTrigger>
         </TabsList>
         <TabsContent value="accounts">
           <BankAccountsPanel />
@@ -44,6 +46,7 @@ function BankAccountsPanel() {
   const [editing, setEditing] = useState<BankAccountRow | null>(null)
   const [deleting, setDeleting] = useState<BankAccountRow | null>(null)
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -59,28 +62,28 @@ function BankAccountsPanel() {
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
-        <CardTitle>Bank Accounts ({accounts?.length ?? 0})</CardTitle>
+        <CardTitle>{t('settings.bankAccountsCount')} ({accounts?.length ?? 0})</CardTitle>
         <RequireRole>
           <Button size="sm" onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" />
-            Add
+            {t('common.add')}
           </Button>
         </RequireRole>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">{t('settings.loading')}</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Account</TableHead>
-                <TableHead>Bank</TableHead>
-                <TableHead>Number</TableHead>
-                <TableHead>IFSC</TableHead>
-                <TableHead className="text-right">Opening Balance</TableHead>
+                <TableHead>{t('settings.account')}</TableHead>
+                <TableHead>{t('settings.bankName')}</TableHead>
+                <TableHead>{t('settings.number')}</TableHead>
+                <TableHead>{t('settings.ifsc')}</TableHead>
+                <TableHead className="text-right">{t('settings.openingBalance')}</TableHead>
                 <RequireRole>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">{t('common.actions')}</TableHead>
                 </RequireRole>
               </TableRow>
             </TableHeader>
@@ -118,8 +121,8 @@ function BankAccountsPanel() {
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(o) => !o && setDeleting(null)}
-        title="Delete this bank account?"
-        description={`${deleting?.account_name} will be permanently removed.`}
+        title={t('settings.deleteBankAccountTitle')}
+        description={`${deleting?.account_name} ${t('settings.deleteBankAccountDescription')}`}
         onConfirm={() => deleting && deleteMutation.mutate(deleting.id)}
         isLoading={deleteMutation.isPending}
       />
@@ -133,6 +136,7 @@ function CategoriesPanel() {
   const [editing, setEditing] = useState<CategoryRow | null>(null)
   const [deleting, setDeleting] = useState<CategoryRow | null>(null)
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -148,25 +152,25 @@ function CategoriesPanel() {
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between">
-        <CardTitle>Categories ({categories?.length ?? 0})</CardTitle>
+        <CardTitle>{t('settings.categoriesCount')} ({categories?.length ?? 0})</CardTitle>
         <RequireRole>
           <Button size="sm" onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" />
-            Add
+            {t('common.add')}
           </Button>
         </RequireRole>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">{t('settings.loading')}</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Kind</TableHead>
+                <TableHead>{t('common.name')}</TableHead>
+                <TableHead>{t('settings.kind')}</TableHead>
                 <RequireRole>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">{t('common.actions')}</TableHead>
                 </RequireRole>
               </TableRow>
             </TableHeader>
@@ -176,7 +180,7 @@ function CategoriesPanel() {
                   <TableCell className="font-medium">{category.name}</TableCell>
                   <TableCell>
                     <Badge variant={category.kind === 'income' ? 'success' : 'secondary'}>
-                      {category.kind}
+                      {category.kind === 'income' ? t('common.income') : t('common.expense')}
                     </Badge>
                   </TableCell>
                   <RequireRole>
@@ -205,8 +209,8 @@ function CategoriesPanel() {
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(o) => !o && setDeleting(null)}
-        title="Delete this category?"
-        description={`${deleting?.name} will be permanently removed.`}
+        title={t('settings.deleteCategoryTitle')}
+        description={`${deleting?.name} ${t('settings.deleteCategoryDescription')}`}
         onConfirm={() => deleting && deleteMutation.mutate(deleting.id)}
         isLoading={deleteMutation.isPending}
       />

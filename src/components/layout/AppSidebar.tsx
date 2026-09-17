@@ -12,30 +12,32 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useIsSuperAdmin } from '@/hooks/useProfile'
-
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/ledger', label: 'Ledger', icon: BookOpen },
-  { to: '/expenses', label: 'Expense Ledger', icon: ArrowDownCircle },
-  { to: '/income', label: 'Income Ledger', icon: ArrowUpCircle },
-  { to: '/parties', label: 'Parties', icon: UserSquare2 },
-  { to: '/members', label: 'Members', icon: Users },
-  { to: '/reports', label: 'Reports', icon: FileBarChart },
-]
-
-const settingsItems = [
-  { to: '/settings/accounts', label: 'Accounts & Categories' },
-  { to: '/settings/users', label: 'Users' },
-]
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 
 export default function AppSidebar() {
   const isSuperAdmin = useIsSuperAdmin()
+  const { t } = useTranslation()
+
+  const navItems = [
+    { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard, end: true },
+    { to: '/ledger', label: t('nav.ledger'), icon: BookOpen },
+    { to: '/expenses', label: t('nav.expenseLedger'), icon: ArrowDownCircle },
+    { to: '/income', label: t('nav.incomeLedger'), icon: ArrowUpCircle },
+    { to: '/parties', label: t('nav.parties'), icon: UserSquare2 },
+    { to: '/members', label: t('nav.members'), icon: Users },
+    { to: '/reports', label: t('nav.reports'), icon: FileBarChart },
+  ]
+
+  const settingsItems = [
+    { to: '/settings/accounts', label: t('nav.accountsCategories') },
+    { to: '/settings/users', label: t('nav.users') },
+  ]
 
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-card md:flex">
       <div className="flex h-14 items-center gap-2 border-b border-border px-4">
         <Building2 className="h-5 w-5 text-primary" />
-        <span className="text-sm font-semibold">Sahu Samaj Bhawan</span>
+        <span className="text-sm font-semibold">{t('nav.appName')}</span>
       </div>
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
         {navItems.map((item) => (
@@ -59,7 +61,7 @@ export default function AppSidebar() {
           <div className="mt-4">
             <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               <Settings className="h-3.5 w-3.5" />
-              Settings
+              {t('nav.settings')}
             </div>
             {settingsItems.map((item) => (
               <NavLink

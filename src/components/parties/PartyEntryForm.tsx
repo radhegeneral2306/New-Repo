@@ -1,9 +1,11 @@
+import { useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -16,14 +18,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
-const entrySchema = z.object({
-  txn_date: z.string().min(1, 'Date is required'),
-  entry_type: z.enum(['debit', 'credit']),
-  amount: z.number().positive('Amount must be greater than 0'),
-  description: z.string().optional(),
-})
-
-type EntryFormValues = z.infer<typeof entrySchema>
+type EntryFormValues = {
+  txn_date: string
+  entry_type: 'debit' | 'credit'
+  amount: number
+  description?: string
+}
 
 interface PartyEntryFormProps {
   open: boolean
@@ -33,6 +33,19 @@ interface PartyEntryFormProps {
 
 export default function PartyEntryForm({ open, onOpenChange, partyId }: PartyEntryFormProps) {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
+
+  const entrySchema = useMemo(
+    () =>
+      z.object({
+        txn_date: z.string().min(1, t('forms.dateRequired')),
+        entry_type: z.enum(['debit', 'credit']),
+        amount: z.number().positive(t('forms.amountPositive')),
+        description: z.string().optional(),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
@@ -72,17 +85,17 @@ export default function PartyEntryForm({ open, onOpenChange, partyId }: PartyEnt
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add ledger entry</DialogTitle>
+          <DialogTitle>{t('forms.addLedgerEntry')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit((v) => mutation.mutate(v))} className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="txn_date">Date</Label>
+              <Label htmlFor="txn_date">{t('common.date')}</Label>
               <Input id="txn_date" type="date" {...register('txn_date')} />
               {errors.txn_date && <p className="text-xs text-destructive">{errors.txn_date.message}</p>}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Entry Type</Label>
+              <Label>{t('forms.entryType')}</Label>
               <Controller
                 control={control}
                 name="entry_type"
@@ -92,8 +105,8 @@ export default function PartyEntryForm({ open, onOpenChange, partyId }: PartyEnt
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="debit">Debit (owed to us)</SelectItem>
-                      <SelectItem value="credit">Credit (paid / settled)</SelectItem>
+                      <SelectItem value="debit">{t('forms.entryDebit')}</SelectItem>
+                      <SelectItem value="credit">{t('forms.entryCredit')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -101,12 +114,12 @@ export default function PartyEntryForm({ open, onOpenChange, partyId }: PartyEnt
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="amount">Amount</Label>
+            <Label htmlFor="amount">{t('common.amount')}</Label>
             <Input id="amount" type="number" step="0.01" {...register('amount', { valueAsNumber: true })} />
             {errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('common.description')}</Label>
             <Input id="description" {...register('description')} />
           </div>
 
@@ -116,10 +129,10 @@ export default function PartyEntryForm({ open, onOpenChange, partyId }: PartyEnt
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              Add entry
+              {t('forms.addEntrySubmit')}
             </Button>
           </DialogFooter>
         </form>

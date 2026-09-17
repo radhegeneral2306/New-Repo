@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import type { UserRole } from '@/types/database.types'
 import { useAuth } from '@/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
@@ -10,6 +11,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 export default function SettingsUsersPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['profiles'],
@@ -34,24 +36,24 @@ export default function SettingsUsersPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-xl font-semibold">Users</h1>
-        <p className="text-sm text-muted-foreground">View accounts and manage roles</p>
+        <h1 className="text-xl font-semibold">{t('settings.usersHeading')}</h1>
+        <p className="text-sm text-muted-foreground">{t('settings.usersSubtitle')}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Users ({profiles?.length ?? 0})</CardTitle>
+          <CardTitle>{t('settings.usersCount')} ({profiles?.length ?? 0})</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t('settings.loading')}</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
+                  <TableHead>{t('common.name')}</TableHead>
+                  <TableHead>{t('common.email')}</TableHead>
+                  <TableHead>{t('settings.role')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -61,7 +63,7 @@ export default function SettingsUsersPage() {
                     <TableCell>{profile.email || '—'}</TableCell>
                     <TableCell>
                       {profile.id === user?.id ? (
-                        <Badge>{profile.role === 'super_admin' ? 'Super Admin' : 'Viewer'}</Badge>
+                        <Badge>{profile.role === 'super_admin' ? t('header.superAdmin') : t('header.viewer')}</Badge>
                       ) : (
                         <Select
                           value={profile.role}
@@ -73,8 +75,8 @@ export default function SettingsUsersPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="viewer">Viewer</SelectItem>
-                            <SelectItem value="super_admin">Super Admin</SelectItem>
+                            <SelectItem value="viewer">{t('header.viewer')}</SelectItem>
+                            <SelectItem value="super_admin">{t('header.superAdmin')}</SelectItem>
                           </SelectContent>
                         </Select>
                       )}

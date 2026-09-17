@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import { useMembers } from '@/hooks/useMembers'
 import type { MemberRow, MembershipStatus } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,6 +24,7 @@ export default function MembersPage() {
   const [editing, setEditing] = useState<MemberRow | null>(null)
   const [deleting, setDeleting] = useState<MemberRow | null>(null)
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
 
   const { data: members, isLoading } = useMembers({ search: search || undefined, status })
 
@@ -41,13 +43,13 @@ export default function MembersPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Members</h1>
-          <p className="text-sm text-muted-foreground">Member directory</p>
+          <h1 className="text-xl font-semibold">{t('members.heading')}</h1>
+          <p className="text-sm text-muted-foreground">{t('members.subtitle')}</p>
         </div>
         <RequireRole>
           <Button onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" />
-            Add Member
+            {t('members.addMember')}
           </Button>
         </RequireRole>
       </div>
@@ -56,7 +58,7 @@ export default function MembersPage() {
         <div className="relative">
           <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name…"
+            placeholder={t('members.searchPlaceholder')}
             className="w-56 pl-8"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -70,31 +72,31 @@ export default function MembersPage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ALL}>All statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem value={ALL}>{t('members.allStatuses')}</SelectItem>
+            <SelectItem value="active">{t('common.active')}</SelectItem>
+            <SelectItem value="inactive">{t('common.inactive')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Members ({members?.length ?? 0})</CardTitle>
+          <CardTitle>{t('members.membersCount')} ({members?.length ?? 0})</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t('members.loading')}</p>
           ) : members && members.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Joined</TableHead>
+                  <TableHead>{t('common.name')}</TableHead>
+                  <TableHead>{t('common.phone')}</TableHead>
+                  <TableHead>{t('common.type')}</TableHead>
+                  <TableHead>{t('common.status')}</TableHead>
+                  <TableHead>{t('members.joined')}</TableHead>
                   <RequireRole>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-right">{t('common.actions')}</TableHead>
                   </RequireRole>
                 </TableRow>
               </TableHeader>
@@ -106,7 +108,7 @@ export default function MembersPage() {
                     <TableCell>{member.membership_type || '—'}</TableCell>
                     <TableCell>
                       <Badge variant={member.membership_status === 'active' ? 'success' : 'secondary'}>
-                        {member.membership_status}
+                        {member.membership_status === 'active' ? t('common.active') : t('common.inactive')}
                       </Badge>
                     </TableCell>
                     <TableCell>{member.joined_date || '—'}</TableCell>
@@ -127,7 +129,7 @@ export default function MembersPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="py-8 text-center text-sm text-muted-foreground">No members found.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t('members.noMembersFound')}</p>
           )}
         </CardContent>
       </Card>
@@ -139,8 +141,8 @@ export default function MembersPage() {
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(o) => !o && setDeleting(null)}
-        title="Delete this member?"
-        description={`${deleting?.full_name} will be permanently removed.`}
+        title={t('members.deleteMemberTitle')}
+        description={`${deleting?.full_name} ${t('members.deleteMemberDescription')}`}
         onConfirm={() => deleting && deleteMutation.mutate(deleting.id)}
         isLoading={deleteMutation.isPending}
       />

@@ -1,5 +1,7 @@
 import CategoryLedgerPage from '@/pages/CategoryLedgerPage'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 
 export default function ExpensesPage() {
-  return <CategoryLedgerPage kind="expense" title="Expense Ledger" />
+  const { t } = useTranslation()
+  return <CategoryLedgerPage kind="expense" title={t('nav.expenseLedger')} />
 }

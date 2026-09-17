@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useTransactions } from '@/hooks/useTransactions'
 import type { TransactionFilters } from '@/hooks/useTransactions'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import LedgerFilters from '@/components/ledger/LedgerFilters'
@@ -13,18 +14,19 @@ export default function LedgerPage() {
   const [filters, setFilters] = useState<TransactionFilters>({})
   const [addOpen, setAddOpen] = useState(false)
   const { data: transactions, isLoading } = useTransactions(filters)
+  const { t } = useTranslation()
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold">Ledger</h1>
-          <p className="text-sm text-muted-foreground">All cash &amp; bank transactions</p>
+          <h1 className="text-xl font-semibold">{t('ledger.heading')}</h1>
+          <p className="text-sm text-muted-foreground">{t('ledger.subtitle')}</p>
         </div>
         <RequireRole>
           <Button onClick={() => setAddOpen(true)}>
             <Plus className="h-4 w-4" />
-            Add Transaction
+            {t('ledger.addTransaction')}
           </Button>
         </RequireRole>
       </div>
@@ -33,7 +35,7 @@ export default function LedgerPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Transactions ({transactions?.length ?? 0})</CardTitle>
+          <CardTitle>{t('ledger.transactions')} ({transactions?.length ?? 0})</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionTable transactions={transactions ?? []} isLoading={isLoading} />

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { supabase } from '@/lib/supabaseClient'
 import type { TransactionWithJoins } from '@/hooks/useTransactions'
 import { useBankAccounts, useCategories, useParties } from '@/hooks/useLookups'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -21,23 +22,16 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 
 const NONE = '__none__'
 
-const transactionSchema = z
-  .object({
-    txn_date: z.string().min(1, 'Date is required'),
-    payment_mode: z.enum(['cash', 'bank']),
-    bank_account_id: z.string().optional(),
-    direction: z.enum(['in', 'out']),
-    amount: z.number().positive('Amount must be greater than 0'),
-    category_id: z.string().optional(),
-    party_id: z.string().optional(),
-    description: z.string().optional(),
-  })
-  .refine((val) => val.payment_mode !== 'bank' || !!val.bank_account_id, {
-    message: 'Bank account is required for bank transactions',
-    path: ['bank_account_id'],
-  })
-
-type TransactionFormValues = z.infer<typeof transactionSchema>
+type TransactionFormValues = {
+  txn_date: string
+  payment_mode: 'cash' | 'bank'
+  bank_account_id?: string
+  direction: 'in' | 'out'
+  amount: number
+  category_id?: string
+  party_id?: string
+  description?: string
+}
 
 interface TransactionFormProps {
   open: boolean
@@ -56,6 +50,27 @@ export default function TransactionForm({
   const { data: bankAccounts } = useBankAccounts()
   const { data: categories } = useCategories()
   const { data: parties } = useParties()
+  const { t } = useTranslation()
+
+  const transactionSchema = useMemo(
+    () =>
+      z
+        .object({
+          txn_date: z.string().min(1, t('forms.dateRequired')),
+          payment_mode: z.enum(['cash', 'bank']),
+          bank_account_id: z.string().optional(),
+          direction: z.enum(['in', 'out']),
+          amount: z.number().positive(t('forms.amountPositive')),
+          category_id: z.string().optional(),
+          party_id: z.string().optional(),
+          description: z.string().optional(),
+        })
+        .refine((val) => val.payment_mode !== 'bank' || !!val.bank_account_id, {
+          message: t('forms.bankAccountRequired'),
+          path: ['bank_account_id'],
+        }),
+    [t],
+  )
 
   const {
     register,
@@ -141,23 +156,23 @@ export default function TransactionForm({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{transaction ? 'Edit transaction' : 'Add transaction'}</DialogTitle>
+          <DialogTitle>{transaction ? t('forms.editTransaction') : t('forms.addTransaction')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {transaction && (
             <div className="text-xs text-muted-foreground">
-              Voucher No: <span className="font-medium text-foreground">{transaction.voucher_no}</span>
+              {t('forms.voucherNo')}: <span className="font-medium text-foreground">{transaction.voucher_no}</span>
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="txn_date">Date</Label>
+              <Label htmlFor="txn_date">{t('common.date')}</Label>
               <Input id="txn_date" type="date" {...register('txn_date')} />
               {errors.txn_date && <p className="text-xs text-destructive">{errors.txn_date.message}</p>}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Direction</Label>
+              <Label>{t('forms.direction')}</Label>
               <Controller
                 control={control}
                 name="direction"
@@ -167,8 +182,8 @@ export default function TransactionForm({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="in">Money In</SelectItem>
-                      <SelectItem value="out">Money Out</SelectItem>
+                      <SelectItem value="in">{t('forms.moneyIn')}</SelectItem>
+                      <SelectItem value="out">{t('forms.moneyOut')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
@@ -178,7 +193,7 @@ export default function TransactionForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label>Payment Mode</Label>
+              <Label>{t('ledger.paymentMode')}</Label>
               <Controller
                 control={control}
                 name="payment_mode"
@@ -188,15 +203,15 @@ export default function TransactionForm({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="cash">Cash</SelectItem>
-                      <SelectItem value="bank">Bank</SelectItem>
+                      <SelectItem value="cash">{t('common.cash')}</SelectItem>
+                      <SelectItem value="bank">{t('common.bank')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="amount">Amount</Label>
+              <Label htmlFor="amount">{t('common.amount')}</Label>
               <Input id="amount" type="number" step="0.01" {...register('amount', { valueAsNumber: true })} />
               {errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}
             </div>
@@ -204,14 +219,14 @@ export default function TransactionForm({
 
           {paymentMode === 'bank' && (
             <div className="flex flex-col gap-1.5">
-              <Label>Bank Account</Label>
+              <Label>{t('forms.bankAccount')}</Label>
               <Controller
                 control={control}
                 name="bank_account_id"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select bank account" />
+                      <SelectValue placeholder={t('forms.selectBankAccount')} />
                     </SelectTrigger>
                     <SelectContent>
                       {bankAccounts?.map((account) => (
@@ -231,7 +246,7 @@ export default function TransactionForm({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label>Category</Label>
+              <Label>{t('ledger.category')}</Label>
               <Controller
                 control={control}
                 name="category_id"
@@ -241,10 +256,10 @@ export default function TransactionForm({
                     onValueChange={(v) => field.onChange(v === NONE ? '' : v)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="None" />
+                      <SelectValue placeholder={t('common.none')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={NONE}>None</SelectItem>
+                      <SelectItem value={NONE}>{t('common.none')}</SelectItem>
                       {categories?.map((category) => (
                         <SelectItem key={category.id} value={category.id}>
                           {category.name} ({category.kind})
@@ -256,7 +271,7 @@ export default function TransactionForm({
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Party (optional)</Label>
+              <Label>{t('forms.partyOptional')}</Label>
               <Controller
                 control={control}
                 name="party_id"
@@ -266,10 +281,10 @@ export default function TransactionForm({
                     onValueChange={(v) => field.onChange(v === NONE ? '' : v)}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="None" />
+                      <SelectValue placeholder={t('common.none')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={NONE}>None</SelectItem>
+                      <SelectItem value={NONE}>{t('common.none')}</SelectItem>
                       {parties?.map((party) => (
                         <SelectItem key={party.id} value={party.id}>
                           {party.name} ({party.party_type})
@@ -283,7 +298,7 @@ export default function TransactionForm({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('common.description')}</Label>
             <Input id="description" {...register('description')} />
           </div>
 
@@ -295,10 +310,10 @@ export default function TransactionForm({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              {transaction ? 'Save changes' : 'Add transaction'}
+              {transaction ? t('common.saveChanges') : t('forms.addTransactionSubmit')}
             </Button>
           </DialogFooter>
         </form>

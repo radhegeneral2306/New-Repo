@@ -1,19 +1,21 @@
 import { useMemo } from 'react'
 import type { TransactionWithJoins } from '@/hooks/useTransactions'
 import { formatCurrency } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function CategoryBreakdown({ transactions }: { transactions: TransactionWithJoins[] }) {
+  const { t } = useTranslation()
   const totals = useMemo(() => {
     const map = new Map<string, number>()
     for (const txn of transactions) {
-      const key = txn.category?.name ?? 'Uncategorized'
+      const key = txn.category?.name ?? t('ledger.uncategorized')
       map.set(key, (map.get(key) ?? 0) + txn.amount)
     }
     return Array.from(map.entries())
       .map(([name, total]) => ({ name, total }))
       .sort((a, b) => b.total - a.total)
-  }, [transactions])
+  }, [transactions, t])
 
   const grandTotal = totals.reduce((sum, row) => sum + row.total, 0)
 
@@ -22,7 +24,7 @@ export default function CategoryBreakdown({ transactions }: { transactions: Tran
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Category-wise totals</CardTitle>
+        <CardTitle>{t('ledger.categoryWiseTotals')}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         {totals.map((row) => (

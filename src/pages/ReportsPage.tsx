@@ -3,6 +3,7 @@ import { FileDown, FileSpreadsheet } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 import { exportToPdf } from '@/lib/exportPdf'
 import { exportToExcel } from '@/lib/exportExcel'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,27 +31,37 @@ async function fetchTransactions(dateFrom: string, dateTo: string, kind?: Catego
   return rows
 }
 
-function txnRows(transactions: TransactionWithJoins[]) {
-  return transactions.map((t) => [
-    t.voucher_no,
-    t.txn_date,
-    t.payment_mode === 'bank' ? `Bank (${t.bank_account?.account_name ?? ''})` : 'Cash',
-    t.direction === 'in' ? 'In' : 'Out',
-    t.category?.name ?? '—',
-    t.party?.name ?? '—',
-    t.description ?? '',
-    (t.direction === 'in' ? t.amount : -t.amount).toFixed(2),
+function txnRows(transactions: TransactionWithJoins[], t: (key: string) => string) {
+  return transactions.map((t2) => [
+    t2.voucher_no,
+    t2.txn_date,
+    t2.payment_mode === 'bank' ? `${t('common.bank')} (${t2.bank_account?.account_name ?? ''})` : t('common.cash'),
+    t2.direction === 'in' ? t('reports.directionIn') : t('reports.directionOut'),
+    t2.category?.name ?? '—',
+    t2.party?.name ?? '—',
+    t2.description ?? '',
+    (t2.direction === 'in' ? t2.amount : -t2.amount).toFixed(2),
   ])
 }
-
-const TXN_HEAD = ['Voucher', 'Date', 'Mode', 'Direction', 'Category', 'Party', 'Description', 'Amount']
 
 export default function ReportsPage() {
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
   const [loadingKey, setLoadingKey] = useState<string | null>(null)
+  const { t } = useTranslation()
 
-  const dateRangeLabel = `Period: ${dateFrom || 'Beginning'} to ${dateTo || 'Today'}`
+  const txnHead = [
+    t('reports.colVoucher'),
+    t('reports.colDate'),
+    t('reports.colMode'),
+    t('reports.colDirection'),
+    t('reports.colCategory'),
+    t('reports.colParty'),
+    t('reports.colDescription'),
+    t('reports.colAmount'),
+  ]
+
+  const dateRangeLabel = `${t('reports.period')}: ${dateFrom || t('reports.beginning')} to ${dateTo || t('reports.today')}`
 
   const withLoading = async (key: string, fn: () => Promise<void>) => {
     setLoadingKey(key)
@@ -61,22 +72,22 @@ export default function ReportsPage() {
     }
   }
 
-  const exportLedger = (format: 'pdf' | 'excel', kind?: CategoryKind, title = 'Full Ledger') =>
+  const exportLedger = (format: 'pdf' | 'excel', kind?: CategoryKind, title = t('reports.fullLedger')) =>
     withLoading(`${title}-${format}`, async () => {
       const transactions = await fetchTransactions(dateFrom, dateTo, kind)
-      const rows = txnRows(transactions)
+      const rows = txnRows(transactions, t)
       const total = transactions.reduce(
-        (sum, t) => sum + (t.direction === 'in' ? t.amount : -t.amount),
+        (sum, txn) => sum + (txn.direction === 'in' ? txn.amount : -txn.amount),
         0,
       )
-      const totalsRow = ['', '', '', '', '', '', 'Total', total.toFixed(2)]
+      const totalsRow = ['', '', '', '', '', '', t('reports.total'), total.toFixed(2)]
       const fileNameBase = title.toLowerCase().replace(/\s+/g, '-')
 
       if (format === 'pdf') {
         exportToPdf({
           title,
           dateRangeLabel,
-          head: TXN_HEAD,
+          head: txnHead,
           rows,
           totalsRow,
           fileName: `${fileNameBase}.pdf`,
@@ -85,7 +96,7 @@ export default function ReportsPage() {
         await exportToExcel({
           title,
           dateRangeLabel,
-          head: TXN_HEAD,
+          head: txnHead,
           rows,
           totalsRow,
           fileName: `${fileNameBase}.xlsx`,
@@ -100,14 +111,14 @@ export default function ReportsPage() {
 
       const rows = (balances ?? []).map((b) => [b.name, b.party_type, b.balance.toFixed(2)])
       const total = (balances ?? []).reduce((sum, b) => sum + b.balance, 0)
-      const totalsRow = ['', 'Total', total.toFixed(2)]
-      const title = 'Debtor / Creditor List'
+      const totalsRow = ['', t('reports.total'), total.toFixed(2)]
+      const title = t('reports.debtorCreditorList')
 
       if (format === 'pdf') {
         exportToPdf({
           title,
-          dateRangeLabel: `As of ${new Date().toLocaleDateString()}`,
-          head: ['Name', 'Type', 'Balance'],
+          dateRangeLabel: `${t('reports.asOf')} ${new Date().toLocaleDateString()}`,
+          head: [t('reports.colName'), t('reports.colType'), t('reports.colBalance')],
           rows,
           totalsRow,
           fileName: 'debtor-creditor-list.pdf',
@@ -115,8 +126,8 @@ export default function ReportsPage() {
       } else {
         await exportToExcel({
           title,
-          dateRangeLabel: `As of ${new Date().toLocaleDateString()}`,
-          head: ['Name', 'Type', 'Balance'],
+          dateRangeLabel: `${t('reports.asOf')} ${new Date().toLocaleDateString()}`,
+          head: [t('reports.colName'), t('reports.colType'), t('reports.colBalance')],
           rows,
           totalsRow,
           fileName: 'debtor-creditor-list.xlsx',
@@ -127,29 +138,29 @@ export default function ReportsPage() {
   const reportCards = [
     {
       key: 'ledger',
-      title: 'Full Ledger',
-      description: 'Every cash & bank transaction in the selected period',
-      onPdf: () => exportLedger('pdf', undefined, 'Full Ledger'),
-      onExcel: () => exportLedger('excel', undefined, 'Full Ledger'),
+      title: t('reports.fullLedger'),
+      description: t('reports.fullLedgerDescription'),
+      onPdf: () => exportLedger('pdf', undefined, t('reports.fullLedger')),
+      onExcel: () => exportLedger('excel', undefined, t('reports.fullLedger')),
     },
     {
       key: 'expenses',
-      title: 'Expense Ledger',
-      description: 'Transactions categorized as expenses',
-      onPdf: () => exportLedger('pdf', 'expense', 'Expense Ledger'),
-      onExcel: () => exportLedger('excel', 'expense', 'Expense Ledger'),
+      title: t('nav.expenseLedger'),
+      description: t('reports.expenseLedgerDescription'),
+      onPdf: () => exportLedger('pdf', 'expense', t('nav.expenseLedger')),
+      onExcel: () => exportLedger('excel', 'expense', t('nav.expenseLedger')),
     },
     {
       key: 'income',
-      title: 'Income Ledger',
-      description: 'Transactions categorized as income',
-      onPdf: () => exportLedger('pdf', 'income', 'Income Ledger'),
-      onExcel: () => exportLedger('excel', 'income', 'Income Ledger'),
+      title: t('nav.incomeLedger'),
+      description: t('reports.incomeLedgerDescription'),
+      onPdf: () => exportLedger('pdf', 'income', t('nav.incomeLedger')),
+      onExcel: () => exportLedger('excel', 'income', t('nav.incomeLedger')),
     },
     {
       key: 'parties',
-      title: 'Debtor / Creditor List',
-      description: 'Current outstanding balances for all parties',
+      title: t('reports.debtorCreditorList'),
+      description: t('reports.debtorCreditorListDescription'),
       onPdf: () => exportParties('pdf'),
       onExcel: () => exportParties('excel'),
     },
@@ -158,22 +169,20 @@ export default function ReportsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-xl font-semibold">Reports</h1>
-        <p className="text-sm text-muted-foreground">Export statements as PDF or Excel</p>
+        <h1 className="text-xl font-semibold">{t('reports.heading')}</h1>
+        <p className="text-sm text-muted-foreground">{t('reports.subtitle')}</p>
       </div>
 
       <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-card p-3">
         <div className="flex flex-col gap-1.5">
-          <Label className="text-xs text-muted-foreground">From (ledger reports)</Label>
+          <Label className="text-xs text-muted-foreground">{t('reports.fromLedger')}</Label>
           <Input type="date" className="w-40" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label className="text-xs text-muted-foreground">To (ledger reports)</Label>
+          <Label className="text-xs text-muted-foreground">{t('reports.toLedger')}</Label>
           <Input type="date" className="w-40" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
         </div>
-        <p className="pb-2 text-xs text-muted-foreground">
-          The debtor/creditor list always reflects current balances, regardless of date range.
-        </p>
+        <p className="pb-2 text-xs text-muted-foreground">{t('reports.partyNote')}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -190,7 +199,7 @@ export default function ReportsPage() {
                 disabled={loadingKey === `${card.title}-pdf` || loadingKey === 'parties-pdf'}
               >
                 <FileDown className="h-4 w-4" />
-                PDF
+                {t('common.pdf')}
               </Button>
               <Button
                 variant="outline"
@@ -198,7 +207,7 @@ export default function ReportsPage() {
                 disabled={loadingKey === `${card.title}-excel` || loadingKey === 'parties-excel'}
               >
                 <FileSpreadsheet className="h-4 w-4" />
-                Excel
+                {t('common.excel')}
               </Button>
             </CardContent>
           </Card>

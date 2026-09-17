@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import type { CategoryRow } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -17,12 +18,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
-const schema = z.object({
-  name: z.string().min(1, 'Required'),
-  kind: z.enum(['expense', 'income']),
-})
-
-type FormValues = z.infer<typeof schema>
+type FormValues = {
+  name: string
+  kind: 'expense' | 'income'
+}
 
 interface CategoryFormProps {
   open: boolean
@@ -32,6 +31,17 @@ interface CategoryFormProps {
 
 export default function CategoryForm({ open, onOpenChange, category }: CategoryFormProps) {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(1, t('forms.required')),
+        kind: z.enum(['expense', 'income']),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
@@ -73,16 +83,16 @@ export default function CategoryForm({ open, onOpenChange, category }: CategoryF
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{category ? 'Edit category' : 'Add category'}</DialogTitle>
+          <DialogTitle>{category ? t('forms.editCategory') : t('forms.addCategory')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit((v) => mutation.mutate(v))} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t('common.name')}</Label>
             <Input id="name" {...register('name')} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label>Kind</Label>
+            <Label>{t('settings.kind')}</Label>
             <Controller
               control={control}
               name="kind"
@@ -92,8 +102,8 @@ export default function CategoryForm({ open, onOpenChange, category }: CategoryF
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="expense">Expense</SelectItem>
-                    <SelectItem value="income">Income</SelectItem>
+                    <SelectItem value="expense">{t('common.expense')}</SelectItem>
+                    <SelectItem value="income">{t('common.income')}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -106,10 +116,10 @@ export default function CategoryForm({ open, onOpenChange, category }: CategoryF
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              {category ? 'Save changes' : 'Add category'}
+              {category ? t('common.saveChanges') : t('forms.addCategorySubmit')}
             </Button>
           </DialogFooter>
         </form>

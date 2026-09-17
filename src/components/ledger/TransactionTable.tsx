@@ -4,6 +4,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabaseClient'
 import type { TransactionWithJoins } from '@/hooks/useTransactions'
 import { formatCurrency } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -25,6 +26,7 @@ export default function TransactionTable({
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState<TransactionWithJoins | null>(null)
   const [deleting, setDeleting] = useState<TransactionWithJoins | null>(null)
+  const { t } = useTranslation()
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -42,11 +44,11 @@ export default function TransactionTable({
   })
 
   if (isLoading) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">Loading transactions…</p>
+    return <p className="py-8 text-center text-sm text-muted-foreground">{t('ledger.loadingTransactions')}</p>
   }
 
   if (transactions.length === 0) {
-    return <p className="py-8 text-center text-sm text-muted-foreground">No transactions found.</p>
+    return <p className="py-8 text-center text-sm text-muted-foreground">{t('ledger.noTransactionsFound')}</p>
   }
 
   return (
@@ -54,15 +56,15 @@ export default function TransactionTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Voucher</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Mode</TableHead>
-            <TableHead>Category</TableHead>
-            {showParty && <TableHead>Party</TableHead>}
-            <TableHead>Description</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead>{t('ledger.voucher')}</TableHead>
+            <TableHead>{t('common.date')}</TableHead>
+            <TableHead>{t('ledger.mode')}</TableHead>
+            <TableHead>{t('ledger.category')}</TableHead>
+            {showParty && <TableHead>{t('ledger.party')}</TableHead>}
+            <TableHead>{t('common.description')}</TableHead>
+            <TableHead className="text-right">{t('common.amount')}</TableHead>
             <RequireRole>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right">{t('common.actions')}</TableHead>
             </RequireRole>
           </TableRow>
         </TableHeader>
@@ -73,8 +75,8 @@ export default function TransactionTable({
               <TableCell>{txn.txn_date}</TableCell>
               <TableCell className="capitalize">
                 {txn.payment_mode === 'bank' && txn.bank_account?.account_name
-                  ? `Bank · ${txn.bank_account.account_name}`
-                  : 'Cash'}
+                  ? `${t('common.bank')} · ${txn.bank_account.account_name}`
+                  : t('common.cash')}
               </TableCell>
               <TableCell>{txn.category?.name ?? '—'}</TableCell>
               {showParty && <TableCell>{txn.party?.name ?? '—'}</TableCell>}
@@ -111,8 +113,8 @@ export default function TransactionTable({
       <ConfirmDialog
         open={!!deleting}
         onOpenChange={(o) => !o && setDeleting(null)}
-        title="Delete this transaction?"
-        description={`Voucher ${deleting?.voucher_no} will be permanently removed. This cannot be undone.`}
+        title={t('ledger.deleteTransactionTitle')}
+        description={`${t('ledger.voucher')} ${deleting?.voucher_no} ${t('ledger.deleteTransactionDescription')}`}
         onConfirm={() => deleting && deleteMutation.mutate(deleting.id)}
         isLoading={deleteMutation.isPending}
       />

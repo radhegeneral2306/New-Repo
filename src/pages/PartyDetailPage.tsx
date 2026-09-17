@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Plus, Pencil, Wallet } from 'lucide-react'
 import { useParty, usePartyTransactions } from '@/hooks/usePartyTransactions'
 import { formatCurrency } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +20,7 @@ export default function PartyDetailPage() {
   const [editOpen, setEditOpen] = useState(false)
   const [entryOpen, setEntryOpen] = useState(false)
   const [settleOpen, setSettleOpen] = useState(false)
+  const { t } = useTranslation()
 
   const rows = useMemo(() => {
     let running = party?.opening_balance ?? 0
@@ -31,14 +33,14 @@ export default function PartyDetailPage() {
   const currentBalance = rows.length > 0 ? rows[rows.length - 1].running : party?.opening_balance ?? 0
 
   if (!party) {
-    return <p className="text-sm text-muted-foreground">Loading party…</p>
+    return <p className="text-sm text-muted-foreground">{t('partyDetail.loadingParty')}</p>
   }
 
   return (
     <div className="flex flex-col gap-4">
       <Link to="/parties" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" />
-        Back to parties
+        {t('partyDetail.backToParties')}
       </Link>
 
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -46,26 +48,26 @@ export default function PartyDetailPage() {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold">{party.name}</h1>
             <Badge variant={party.party_type === 'debtor' ? 'secondary' : 'outline'}>
-              {party.party_type}
+              {party.party_type === 'debtor' ? t('common.debtor') : t('common.creditor')}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            {party.phone || 'No phone'} · {party.address || 'No address'}
+            {party.phone || t('partyDetail.noPhone')} · {party.address || t('partyDetail.noAddress')}
           </p>
         </div>
         <RequireRole>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setEditOpen(true)}>
               <Pencil className="h-4 w-4" />
-              Edit
+              {t('common.edit')}
             </Button>
             <Button variant="outline" onClick={() => setEntryOpen(true)}>
               <Plus className="h-4 w-4" />
-              Add Entry
+              {t('partyDetail.addEntry')}
             </Button>
             <Button onClick={() => setSettleOpen(true)}>
               <Wallet className="h-4 w-4" />
-              Settle via Cash/Bank
+              {t('partyDetail.settleViaCashBank')}
             </Button>
           </div>
         </RequireRole>
@@ -73,7 +75,7 @@ export default function PartyDetailPage() {
 
       <Card className="w-fit">
         <CardHeader>
-          <CardTitle>Current Balance</CardTitle>
+          <CardTitle>{t('partyDetail.currentBalance')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-semibold">{formatCurrency(currentBalance)}</div>
@@ -82,26 +84,26 @@ export default function PartyDetailPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Ledger history</CardTitle>
+          <CardTitle>{t('partyDetail.ledgerHistory')}</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">Loading…</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t('partyDetail.loading')}</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-right">Running Balance</TableHead>
+                  <TableHead>{t('common.date')}</TableHead>
+                  <TableHead>{t('common.type')}</TableHead>
+                  <TableHead>{t('common.description')}</TableHead>
+                  <TableHead className="text-right">{t('common.amount')}</TableHead>
+                  <TableHead className="text-right">{t('partyDetail.runningBalance')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
                   <TableCell colSpan={4} className="text-muted-foreground">
-                    Opening balance
+                    {t('partyDetail.openingBalance')}
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     {formatCurrency(party.opening_balance)}
@@ -110,7 +112,9 @@ export default function PartyDetailPage() {
                 {rows.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell>{row.txn_date}</TableCell>
-                    <TableCell className="capitalize">{row.entry_type}</TableCell>
+                    <TableCell className="capitalize">
+                      {row.entry_type === 'debit' ? t('common.debit') : t('common.credit')}
+                    </TableCell>
                     <TableCell className="text-muted-foreground">{row.description || '—'}</TableCell>
                     <TableCell className="text-right">
                       {row.entry_type === 'debit' ? '+' : '-'}

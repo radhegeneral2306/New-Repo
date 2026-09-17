@@ -2,31 +2,33 @@ import { Wallet, Landmark, ArrowDownCircle, ArrowUpCircle } from 'lucide-react'
 import { useDashboardSummary } from '@/hooks/useDashboardSummary'
 import { useTransactions } from '@/hooks/useTransactions'
 import { formatCurrency } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import TransactionTable from '@/components/ledger/TransactionTable'
 
 export default function DashboardPage() {
   const { data: summary, isLoading: summaryLoading } = useDashboardSummary()
   const { data: recentTransactions, isLoading: txnsLoading } = useTransactions({}, 10)
+  const { t } = useTranslation()
 
   const cards = [
     {
-      label: 'Cash Balance',
+      label: t('dashboard.cashBalance'),
       value: summary?.cash_balance ?? 0,
       icon: Wallet,
     },
     {
-      label: 'Bank Balance',
+      label: t('dashboard.bankBalance'),
       value: summary?.bank_balance ?? 0,
       icon: Landmark,
     },
     {
-      label: 'Pending from Debtors',
+      label: t('dashboard.pendingFromDebtors'),
       value: summary?.total_debtor_balance ?? 0,
       icon: ArrowDownCircle,
     },
     {
-      label: 'Payable to Creditors',
+      label: t('dashboard.payableToCreditors'),
       value: summary?.total_creditor_balance ?? 0,
       icon: ArrowUpCircle,
     },
@@ -35,8 +37,8 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Overview of Sahu Samaj Bhawan accounts</p>
+        <h1 className="text-xl font-semibold">{t('dashboard.heading')}</h1>
+        <p className="text-sm text-muted-foreground">{t('dashboard.subtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -57,7 +59,7 @@ export default function DashboardPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
+          <CardTitle>{t('dashboard.recentTransactions')}</CardTitle>
         </CardHeader>
         <CardContent>
           <TransactionTable transactions={recentTransactions ?? []} isLoading={txnsLoading} />

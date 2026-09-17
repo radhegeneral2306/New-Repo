@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import type { BankAccountRow } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -16,15 +17,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-const schema = z.object({
-  account_name: z.string().min(1, 'Required'),
-  bank_name: z.string().min(1, 'Required'),
-  account_number: z.string().min(1, 'Required'),
-  ifsc: z.string().optional(),
-  opening_balance: z.number(),
-})
-
-type FormValues = z.infer<typeof schema>
+type FormValues = {
+  account_name: string
+  bank_name: string
+  account_number: string
+  ifsc?: string
+  opening_balance: number
+}
 
 interface BankAccountFormProps {
   open: boolean
@@ -34,6 +33,20 @@ interface BankAccountFormProps {
 
 export default function BankAccountForm({ open, onOpenChange, account }: BankAccountFormProps) {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        account_name: z.string().min(1, t('forms.required')),
+        bank_name: z.string().min(1, t('forms.required')),
+        account_number: z.string().min(1, t('forms.required')),
+        ifsc: z.string().optional(),
+        opening_balance: z.number(),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
@@ -81,34 +94,34 @@ export default function BankAccountForm({ open, onOpenChange, account }: BankAcc
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{account ? 'Edit bank account' : 'Add bank account'}</DialogTitle>
+          <DialogTitle>{account ? t('forms.editBankAccount') : t('forms.addBankAccount')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit((v) => mutation.mutate(v))} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="account_name">Account name</Label>
+            <Label htmlFor="account_name">{t('forms.accountName')}</Label>
             <Input id="account_name" {...register('account_name')} />
             {errors.account_name && <p className="text-xs text-destructive">{errors.account_name.message}</p>}
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="bank_name">Bank name</Label>
+            <Label htmlFor="bank_name">{t('forms.bankNameField')}</Label>
             <Input id="bank_name" {...register('bank_name')} />
             {errors.bank_name && <p className="text-xs text-destructive">{errors.bank_name.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="account_number">Account number</Label>
+              <Label htmlFor="account_number">{t('forms.accountNumber')}</Label>
               <Input id="account_number" {...register('account_number')} />
               {errors.account_number && (
                 <p className="text-xs text-destructive">{errors.account_number.message}</p>
               )}
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ifsc">IFSC</Label>
+              <Label htmlFor="ifsc">{t('settings.ifsc')}</Label>
               <Input id="ifsc" {...register('ifsc')} />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="opening_balance">Opening balance</Label>
+            <Label htmlFor="opening_balance">{t('settings.openingBalance')}</Label>
             <Input
               id="opening_balance"
               type="number"
@@ -123,10 +136,10 @@ export default function BankAccountForm({ open, onOpenChange, account }: BankAcc
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              {account ? 'Save changes' : 'Add account'}
+              {account ? t('common.saveChanges') : t('forms.addAccountSubmit')}
             </Button>
           </DialogFooter>
         </form>

@@ -1,10 +1,11 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import type { MemberRow } from '@/types/database.types'
+import { useTranslation } from '@/lib/i18n/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -17,18 +18,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 
-const memberSchema = z.object({
-  full_name: z.string().min(1, 'Name is required'),
-  phone: z.string().optional(),
-  email: z.string().email('Enter a valid email').optional().or(z.literal('')),
-  address: z.string().optional(),
-  membership_type: z.string().optional(),
-  membership_status: z.enum(['active', 'inactive']),
-  joined_date: z.string().optional(),
-  notes: z.string().optional(),
-})
-
-type MemberFormValues = z.infer<typeof memberSchema>
+type MemberFormValues = {
+  full_name: string
+  phone?: string
+  email?: string
+  address?: string
+  membership_type?: string
+  membership_status: 'active' | 'inactive'
+  joined_date?: string
+  notes?: string
+}
 
 interface MemberFormProps {
   open: boolean
@@ -38,6 +37,23 @@ interface MemberFormProps {
 
 export default function MemberForm({ open, onOpenChange, member }: MemberFormProps) {
   const queryClient = useQueryClient()
+  const { t } = useTranslation()
+
+  const memberSchema = useMemo(
+    () =>
+      z.object({
+        full_name: z.string().min(1, t('forms.nameRequired')),
+        phone: z.string().optional(),
+        email: z.string().email(t('auth.emailInvalid')).optional().or(z.literal('')),
+        address: z.string().optional(),
+        membership_type: z.string().optional(),
+        membership_status: z.enum(['active', 'inactive']),
+        joined_date: z.string().optional(),
+        notes: z.string().optional(),
+      }),
+    [t],
+  )
+
   const {
     register,
     handleSubmit,
@@ -115,36 +131,36 @@ export default function MemberForm({ open, onOpenChange, member }: MemberFormPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{member ? 'Edit member' : 'Add member'}</DialogTitle>
+          <DialogTitle>{member ? t('forms.editMember') : t('forms.addMember')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit((v) => mutation.mutate(v))} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="full_name">Full name</Label>
+            <Label htmlFor="full_name">{t('forms.fullName')}</Label>
             <Input id="full_name" {...register('full_name')} />
             {errors.full_name && <p className="text-xs text-destructive">{errors.full_name.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">{t('common.phone')}</Label>
               <Input id="phone" {...register('phone')} />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('common.email')}</Label>
               <Input id="email" type="email" {...register('email')} />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t('forms.address')}</Label>
             <Input id="address" {...register('address')} />
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="membership_type">Membership Type</Label>
-              <Input id="membership_type" placeholder="e.g. Annual" {...register('membership_type')} />
+              <Label htmlFor="membership_type">{t('forms.membershipType')}</Label>
+              <Input id="membership_type" placeholder={t('forms.membershipTypePlaceholder')} {...register('membership_type')} />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label>Status</Label>
+              <Label>{t('common.status')}</Label>
               <Controller
                 control={control}
                 name="membership_status"
@@ -154,20 +170,20 @@ export default function MemberForm({ open, onOpenChange, member }: MemberFormPro
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="active">{t('common.active')}</SelectItem>
+                      <SelectItem value="inactive">{t('common.inactive')}</SelectItem>
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="joined_date">Joined Date</Label>
+              <Label htmlFor="joined_date">{t('forms.joinedDate')}</Label>
               <Input id="joined_date" type="date" {...register('joined_date')} />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">{t('forms.notes')}</Label>
             <Input id="notes" {...register('notes')} />
           </div>
 
@@ -177,10 +193,10 @@ export default function MemberForm({ open, onOpenChange, member }: MemberFormPro
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting || mutation.isPending}>
-              {member ? 'Save changes' : 'Add member'}
+              {member ? t('common.saveChanges') : t('forms.addMemberSubmit')}
             </Button>
           </DialogFooter>
         </form>
