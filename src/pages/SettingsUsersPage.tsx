@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabaseClient'
 import type { UserRole } from '@/types/database.types'
@@ -5,13 +6,16 @@ import { useAuth } from '@/hooks/useAuth'
 import { useTranslation } from '@/lib/i18n/LanguageContext'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import AddUserForm from '@/components/settings/AddUserForm'
 
 export default function SettingsUsersPage() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { t } = useTranslation()
+  const [addUserOpen, setAddUserOpen] = useState(false)
 
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['profiles'],
@@ -35,10 +39,15 @@ export default function SettingsUsersPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-xl font-semibold">{t('settings.usersHeading')}</h1>
-        <p className="text-sm text-muted-foreground">{t('settings.usersSubtitle')}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold">{t('settings.usersHeading')}</h1>
+          <p className="text-sm text-muted-foreground">{t('settings.usersSubtitle')}</p>
+        </div>
+        <Button onClick={() => setAddUserOpen(true)}>{t('settings.addUser')}</Button>
       </div>
+
+      <AddUserForm open={addUserOpen} onOpenChange={setAddUserOpen} />
 
       <Card>
         <CardHeader>
