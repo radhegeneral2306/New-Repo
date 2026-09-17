@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from '@/components/layout/ProtectedRoute'
 import RequireRole from '@/components/layout/RequireRole'
 import AppLayout from '@/components/layout/AppLayout'
@@ -31,7 +31,7 @@ function SettingsOnly({ children }: { children: ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route
@@ -67,6 +67,6 @@ export default function App() {
           />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
